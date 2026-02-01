@@ -1,57 +1,88 @@
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-
-const data = [
-  { time: '00:00', sentiment: 45 },
-  { time: '04:00', sentiment: 52 },
-  { time: '08:00', sentiment: 48 },
-  { time: '12:00', sentiment: 70 },
-  { time: '16:00', sentiment: 65 },
-  { time: '20:00', sentiment: 85 },
-  { time: '24:00', sentiment: 80 },
-];
 
 interface MarketChartProps {
   status: string;
 }
 
 const MarketChart: React.FC<MarketChartProps> = ({ status }) => {
+  // Simulated data points for the SVG chart
+  const points = [40, 35, 55, 45, 70, 60, 85, 80];
+  const max = 100;
+  const width = 300;
+  const height = 150;
+
+  const getPath = () => {
+    return points.map((p, i) => {
+      const x = (i / (points.length - 1)) * width;
+      const y = height - (p / max) * height;
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
+  };
+
+  const getAreaPath = () => {
+    const p = getPath();
+    return `${p} L ${width} ${height} L 0 ${height} Z`;
+  };
+
   return (
     <div className="glass-panel rounded-2xl p-6 h-[300px] flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-bold text-slate-200">Aggregate Sentiment</h3>
-        <span className={`text-xs px-2 py-1 rounded font-bold uppercase ${status === 'explosive' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-slate-200">Neural Sentiment</h3>
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest">Base Aggregation Layer</p>
+        </div>
+        <span className={`text-[10px] px-2 py-1 rounded font-black uppercase tracking-tighter ${status === 'explosive' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
            {status}
         </span>
       </div>
-      <div className="flex-grow">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-            <XAxis dataKey="time" stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} />
-            <YAxis hide />
-            <Tooltip 
-              contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
-              itemStyle={{ color: '#22c55e' }}
+      
+      <div className="flex-grow relative flex items-center justify-center">
+        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
+          {/* Grid lines */}
+          <line x1="0" y1={height*0.25} x2={width} y2={height*0.25} stroke="#1e293b" strokeDasharray="4 4" />
+          <line x1="0" y1={height*0.5} x2={width} y2={height*0.5} stroke="#1e293b" strokeDasharray="4 4" />
+          <line x1="0" y1={height*0.75} x2={width} y2={height*0.75} stroke="#1e293b" strokeDasharray="4 4" />
+          
+          {/* Area under the line */}
+          <path d={getAreaPath()} fill="url(#gradient)" opacity="0.3" />
+          
+          {/* Main path line */}
+          <path 
+            d={getPath()} 
+            fill="none" 
+            stroke="#22c55e" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className="drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]"
+          />
+          
+          {/* Data points */}
+          {points.map((p, i) => (
+            <circle 
+              key={i} 
+              cx={(i / (points.length - 1)) * width} 
+              cy={height - (p / max) * height} 
+              r="4" 
+              fill="#020617" 
+              stroke="#22c55e" 
+              strokeWidth="2" 
             />
-            <Area 
-                type="monotone" 
-                dataKey="sentiment" 
-                stroke="#22c55e" 
-                strokeWidth={3} 
-                fillOpacity={1} 
-                fill="url(#colorSent)" 
-                animationDuration={2000}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+          ))}
+
+          <defs>
+            <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#22c55e" />
+              <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      
+      <div className="flex justify-between mt-4 text-[10px] text-slate-500 font-mono">
+        <span>T-24H</span>
+        <span>CURRENT_BLOCK</span>
       </div>
     </div>
   );
