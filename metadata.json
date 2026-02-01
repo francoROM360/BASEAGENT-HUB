@@ -1,0 +1,5 @@
+{
+  "name": "BaseAgent Hub: Molt & Clawn Intel",
+  "description": "An autonomous intelligence aggregator for moltbook.com and clawn.ch token launches. Tracks agent noise, market feedback, and supports the ecosystem on the Base network.",
+  "requestFramePermissions": []
+}
