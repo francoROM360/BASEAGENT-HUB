@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-const CREATOR_ADDRESS = "0x1A976ec3e83e4D8b001f89A9e6C1c2FAE5C287A1";
+const CREATOR_ADDRESS = "0x497842D51EB7e7c9F810c39e57032063a6Ab893B";
 
 const DonationPanel: React.FC = () => {
   const [copied, setCopied] = useState(false);

@@ -108,7 +108,7 @@ const App: React.FC = () => {
       </main>
 
       <footer className="text-center text-slate-600 text-[10px] py-4 uppercase tracking-[0.2em]">
-        Neural Sync 0x1A9...87A1 // Powered by Base Network
+        Neural Sync 0x497...893B // Powered by Base Network
       </footer>
     </div>
   );
